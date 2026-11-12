@@ -8,14 +8,12 @@
   <title>Configurações · NeuroPlan</title>
   <link rel="icon" type="image/png" href="img/icone-app.png">
   <link rel="apple-touch-icon" href="img/icone-app.png">
-  <!-- aplica tema/modo calmo antes de desenhar a página (evita "piscar") -->
   <script>try{var c=JSON.parse(localStorage.getItem("neuroplan:config")||"{}"),k=JSON.parse(localStorage.getItem("neuroplan:cuidados")||"{}"),t=c.tema||"claro",r=document.documentElement;if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"escuro":"claro";r.dataset.tema=t;if(k["modo-calmo"])r.classList.add("modo-calmo")}catch(e){}</script>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body class="pagina-configuracoes">
 
-  <!-- Ícones (sprite SVG): <svg class="icone"><use href="#i-home"/></svg> -->
   <svg xmlns="http://www.w3.org/2000/svg" hidden>
     <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
     <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
@@ -32,7 +30,6 @@
 
   <div class="app">
 
-    <!-- Cabeçalho (igual em todas as páginas) -->
     <header class="topo">
       <a href="index.html" class="topo__logo" aria-label="NeuroPlan - ir para Hoje">
         <img class="logo logo--claro" src="img/logo-horizontal.png" width="930" height="201" alt="NeuroPlan"><img class="logo logo--escuro" src="img/logo-horizontal-escuro.png" width="930" height="199" alt="">
@@ -94,7 +91,6 @@
       </section>
     </main>
 
-    <!-- Menu inferior (igual em todas as páginas) -->
     <nav class="menu" aria-label="Navegação principal">
       <a href="index.html" class="menu__item">
         <svg class="icone" aria-hidden="true"><use href="#i-home"/></svg>

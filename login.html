@@ -7,7 +7,6 @@
   <title>Entrar · NeuroPlan</title>
   <link rel="icon" type="image/png" href="img/icone-app.png">
   <link rel="apple-touch-icon" href="img/icone-app.png">
-  <!-- aplica tema/modo calmo antes de desenhar a página (evita "piscar") -->
   <script>try{var c=JSON.parse(localStorage.getItem("neuroplan:config")||"{}"),k=JSON.parse(localStorage.getItem("neuroplan:cuidados")||"{}"),t=c.tema||"claro",r=document.documentElement;if(t==="auto")t=matchMedia("(prefers-color-scheme: dark)").matches?"escuro":"claro";r.dataset.tema=t;if(k["modo-calmo"])r.classList.add("modo-calmo")}catch(e){}</script>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
@@ -22,7 +21,6 @@
 
       <form class="login__form" id="form-login" novalidate>
 
-        <!-- PASSO 1: sobre você -->
         <fieldset class="login__passo" data-passo="conta">
           <div class="titulo-tela"><p class="titulo-tela__rotulo">Bem-vindo(a)</p>
             <h1 class="titulo-tela__titulo" id="login-titulo">Vamos te conhecer</h1></div>
@@ -44,7 +42,6 @@
             </div></fieldset>
         </fieldset>
 
-        <!-- PASSO 2: TDAH -->
         <fieldset class="login__passo" data-passo="tdah">
           <div class="titulo-tela"><p class="titulo-tela__rotulo">TDAH</p><h2 class="titulo-tela__titulo">Atenção e energia</h2></div>
 
@@ -92,7 +89,6 @@
             </div></fieldset>
         </fieldset>
 
-        <!-- PASSO 3: TEA -->
         <fieldset class="login__passo" data-passo="tea">
           <div class="titulo-tela"><p class="titulo-tela__rotulo">TEA</p><h2 class="titulo-tela__titulo">Rotina e sentidos</h2></div>
 
@@ -141,7 +137,6 @@
             <p class="campo__ajuda">Podemos usar isso para deixar o app mais motivador.</p></div>
         </fieldset>
 
-        <!-- PASSO 4: dia a dia -->
         <fieldset class="login__passo" data-passo="final">
           <div class="titulo-tela"><p class="titulo-tela__rotulo">Quase lá</p><h2 class="titulo-tela__titulo">Seu dia a dia</h2></div>
 

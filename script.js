@@ -1,14 +1,13 @@
 (function () {
   "use strict";
 
-  const SEMEAR_EXEMPLOS = true;
-
   const CHAVES = {
     tarefas: "neuroplan:tarefas",
     concluidas: "neuroplan:concluidas",
     cuidados: "neuroplan:cuidados",
     perfil: "neuroplan:perfil",
     aviso: "neuroplan:aviso",
+    base: "neuroplan:base",
   };
 
   const DIAS = [
@@ -130,68 +129,58 @@
       avisar: t.avisar !== false,
       descricao: t.descricao || "",
       data: ehISO(t.data) ? t.data : hojeISO(),
-      repetir: Boolean(t.repetir),
+      repetir: Boolean(t.repetir || t.diaria),
+      diaria: Boolean(t.diaria),
       importante: Boolean(t.importante),
     };
   }
-  function exemplos() {
-    const hoje = hojeISO(),
-      amanha = somarDias(hoje, 1);
+  function tarefasBase() {
+    const hoje = hojeISO();
     return [
       {
-        id: "ex1",
-        nome: "Revisar biologia",
-        categoria: "aula",
-        inicio: "09:00",
-        fim: "10:00",
+        id: "base-almoco",
+        nome: "Almoço",
+        categoria: "saude",
+        inicio: "12:00",
+        fim: "13:00",
         data: hoje,
         repetir: true,
-        importante: true,
+        diaria: true,
       },
       {
-        id: "ex2",
-        nome: "Arrumar o quarto",
-        categoria: "afazeres",
-        inicio: "11:00",
-        fim: "11:30",
-        data: hoje,
-      },
-      { id: "ex3", nome: "Academia", categoria: "saude", inicio: "16:00", fim: "17:00", data: hoje },
-      {
-        id: "ex4",
-        nome: "Revisar Matemática",
-        categoria: "aula",
-        inicio: "19:00",
-        fim: "20:00",
+        id: "base-janta",
+        nome: "Janta",
+        categoria: "saude",
+        inicio: "20:00",
+        fim: "21:00",
         data: hoje,
         repetir: true,
-      },
-      {
-        id: "ex5",
-        nome: "Entregar trabalho de história",
-        categoria: "aula",
-        inicio: "10:00",
-        fim: "10:30",
-        data: amanha,
+        diaria: true,
       },
     ];
   }
   function carregarTarefas() {
-    let lista = ler(CHAVES.tarefas, null);
-    if (lista === null) {
-      lista = SEMEAR_EXEMPLOS ? exemplos() : [];
-      guardar(CHAVES.tarefas, lista);
+    let lista = ler(CHAVES.tarefas, []);
+    let mudou = false;
+    const semExemplos = lista.filter((t) => !/^ex[1-5]$/.test(t.id));
+    if (semExemplos.length !== lista.length) {
+      lista = semExemplos;
+      mudou = true;
     }
-    const precisa = lista.some((t) => !ehISO(t.data));
-    const norm = lista.map(normalizar);
-    if (precisa) guardar(CHAVES.tarefas, norm);
-    return norm;
+    if (!ler(CHAVES.base, false)) {
+      lista = lista.concat(tarefasBase());
+      guardar(CHAVES.base, true);
+      mudou = true;
+    }
+    if (mudou || lista.some((t) => !ehISO(t.data))) guardar(CHAVES.tarefas, lista.map(normalizar));
+    return lista.map(normalizar);
   }
   const salvarTarefas = (l) => guardar(CHAVES.tarefas, l);
 
   function ocorreEm(t, iso) {
     if (t.data === iso) return true;
-    return t.repetir && iso > t.data && deISO(iso).getDay() === deISO(t.data).getDay();
+    if (!t.repetir || iso < t.data) return false;
+    return t.diaria || deISO(iso).getDay() === deISO(t.data).getDay();
   }
   function ordenar(a, b, prioridade) {
     if (prioridade && a.importante !== b.importante) return a.importante ? -1 : 1;
@@ -241,7 +230,7 @@
       partes.push(Math.ceil(total / FOCO) + " sessões de " + FOCO + " min");
     if (cuidados.pausas && total > PAUSA) partes.push("pausa a cada " + PAUSA + " min");
     if (destaque) partes.push("Importante");
-    if (tarefa.repetir) partes.push("Toda semana");
+    if (tarefa.repetir) partes.push(tarefa.diaria ? "Todo dia" : "Toda semana");
 
     const meta = document.createElement("span");
     meta.className = "tarefa__meta";
@@ -454,13 +443,21 @@
       textoData.textContent = rotuloData(campoData.value);
     });
 
+    form.elements.repetir.addEventListener("change", () => {
+      if (form.elements.repetir.checked) form.elements.diaria.checked = false;
+    });
+    form.elements.diaria.addEventListener("change", () => {
+      if (form.elements.diaria.checked) form.elements.repetir.checked = false;
+    });
+
     if (existente) {
       campoNome.value = existente.nome;
       form.elements.categoria.value = existente.categoria;
       campoInicio.value = existente.inicio;
       campoFim.value = existente.fim;
       form.elements.aviso.checked = existente.avisar;
-      form.elements.repetir.checked = existente.repetir;
+      form.elements.repetir.checked = existente.repetir && !existente.diaria;
+      form.elements.diaria.checked = existente.diaria;
       form.elements.importante.checked = existente.importante;
       form.elements.descricao.value = existente.descricao;
       $("#nova-rotulo").textContent = "Editar";
@@ -518,6 +515,7 @@
         descricao: form.elements.descricao.value.trim(),
         data: campoData.value,
         repetir: form.elements.repetir.checked,
+        diaria: form.elements.diaria.checked,
         importante: form.elements.importante.checked,
       });
       salvarTarefas(
@@ -534,7 +532,7 @@
           'Excluir "' +
             existente.nome +
             '"?' +
-            (existente.repetir ? "\nIsso remove todas as repetições semanais." : ""),
+            (existente.repetir ? "\nIsso remove todas as repetições." : ""),
         )
       )
         return;
